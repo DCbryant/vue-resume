@@ -23,22 +23,8 @@ var app = new Vue({
     currentUser: null,
   },
   created: function(){
-    // 在窗口关闭的时候将数据保存到 localStorage
-    // 但是有一个bug：beforeunload 事件里面的所有请求都发不出去，会被取消！
-    window.onbeforeunload = () => {
-        var dataString = JSON.stringify(this.todoList)
-        // window.localStorage.setItem('myTodos',dataString)
-
-        var AVTodos = AV.Object.extend('AllTodos')
-        var avTodos = new AVTodos()
-        avTodos.set('content',dataString)
-        avTodos.save().then(function(todo){
-            console.log('保存成功')
-        },function(error){
-            console.log('保存失败')
-        })
-        
-    }
+    // 所以这次我们放弃beforeunload这个事件
+    
     // // 从 LeanCloud 读取 todos 的逻辑先不写
     // let oldDataString = window.localStorage.getItem('myTodos')
     // let oldDate = JSON.parse(oldDataString)
@@ -54,10 +40,12 @@ var app = new Vue({
               done:false
           })
           this.newTodo = ''
+          this.saveTodos()
       },
       removeTodo:function(todo){
           let index = this.todoList.indexOf(todo)
           this.todoList.splice(index,1)
+          this.saveTodos()
       },
       signup:function(){
         // 将username、id、createdAt传给服务器存储到服务器
@@ -96,6 +84,18 @@ var app = new Vue({
           AV.User.logOut()
           this.currentUser = null
           window.location.reload()
+      },
+      //在每次用户新增、删除 todo 的时候，就发送一个请求   
+      saveTodos:function(){
+          let dataString = JSON.stringify(this.todoList)
+          var AVTodos = AV.Object.extend('AllTodos')
+          var avTodos = new AVTodos()
+          avTodos.set('content',dataString)
+          avTodos.save().then(function(todo){
+              alert('保存成功')
+          },function(error){
+              alert('保存失败')
+          })
       }
   }
 })  
