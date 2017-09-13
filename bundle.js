@@ -292,14 +292,25 @@ var app = new _vue2.default({
     created: function created() {
         var _this = this;
 
-        // 当窗口即将被卸载时,会触发该事件.此时页面文档依然可见,且该事件的默认动作可以被取消
+        // 在窗口关闭的时候将数据保存到 localStorage
+        // 但是有一个bug：beforeunload 事件里面的所有请求都发不出去，会被取消！
         window.onbeforeunload = function () {
             var dataString = JSON.stringify(_this.todoList);
-            window.localStorage.setItem('myTodos', dataString);
+            // window.localStorage.setItem('myTodos',dataString)
+
+            var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
+            var avTodos = new AVTodos();
+            avTodos.set('content', dataString);
+            avTodos.save().then(function (todo) {
+                console.log('保存成功');
+            }, function (error) {
+                console.log('保存失败');
+            });
         };
-        var oldDataString = window.localStorage.getItem('myTodos');
-        var oldDate = JSON.parse(oldDataString);
-        this.todoList = oldDate || [];
+        // // 从 LeanCloud 读取 todos 的逻辑先不写
+        // let oldDataString = window.localStorage.getItem('myTodos')
+        // let oldDate = JSON.parse(oldDataString)
+        // this.todoList = oldDate || []
 
         this.currentUser = this.getCurrentUser();
     },
