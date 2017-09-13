@@ -105,7 +105,7 @@ var app = new Vue({
           var avTodos = new AVTodos()
           //Access Control List   
           var acl = new AV.ACL()  
-          acl.setPublicReadAccess(AV.User.current(),true) // 只有这个 user 能读
+          acl.setReadAccess(AV.User.current(),true) // 只有这个 user 能读
           acl.setWriteAccess(AV.User.current(),true);  // 只有这个 user 能写
 
           avTodos.set('content',dataString)
