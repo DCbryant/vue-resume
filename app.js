@@ -31,6 +31,15 @@ var app = new Vue({
     // this.todoList = oldDate || []
 
     this.currentUser = this.getCurrentUser()
+    // 批量操作读取数据
+    if(this.currentUser){
+        var query = new AV.Query('AllTodos');
+        query.find().then(function (todos) {
+            console.log(todos)
+          }).then(function(error) {
+            console.log(error)
+          });
+    }
   },
   methods:{
       addTodo:function(){
