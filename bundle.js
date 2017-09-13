@@ -290,23 +290,8 @@ var app = new _vue2.default({
         currentUser: null
     },
     created: function created() {
-        var _this = this;
+        // 所以这次我们放弃beforeunload这个事件
 
-        // 在窗口关闭的时候将数据保存到 localStorage
-        // 但是有一个bug：beforeunload 事件里面的所有请求都发不出去，会被取消！
-        window.onbeforeunload = function () {
-            var dataString = JSON.stringify(_this.todoList);
-            // window.localStorage.setItem('myTodos',dataString)
-
-            var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
-            var avTodos = new AVTodos();
-            avTodos.set('content', dataString);
-            avTodos.save().then(function (todo) {
-                console.log('保存成功');
-            }, function (error) {
-                console.log('保存失败');
-            });
-        };
         // // 从 LeanCloud 读取 todos 的逻辑先不写
         // let oldDataString = window.localStorage.getItem('myTodos')
         // let oldDate = JSON.parse(oldDataString)
@@ -322,13 +307,15 @@ var app = new _vue2.default({
                 done: false
             });
             this.newTodo = '';
+            this.saveTodos();
         },
         removeTodo: function removeTodo(todo) {
             var index = this.todoList.indexOf(todo);
             this.todoList.splice(index, 1);
+            this.saveTodos();
         },
         signup: function signup() {
-            var _this2 = this;
+            var _this = this;
 
             // 将username、id、createdAt传给服务器存储到服务器
             // 密码会自动传过去，前端看不到
@@ -336,17 +323,17 @@ var app = new _vue2.default({
             user.setUsername(this.formData.username);
             user.setPassword(this.formData.password);
             user.signUp().then(function (loginedUser) {
-                _this2.currentUser = _this2.getCurrentUser();
+                _this.currentUser = _this.getCurrentUser();
             }, function (error) {
                 alert('注册失败');
             });
         },
         //同时满足username、password就登陆   
         login: function login() {
-            var _this3 = this;
+            var _this2 = this;
 
             _leancloudStorage2.default.User.logIn(this.formData.username, this.formData.password).then(function (loginedUser) {
-                _this3.currentUser = _this3.getCurrentUser();
+                _this2.currentUser = _this2.getCurrentUser();
             }, function (error) {
                 alert('登录失败');
             });
@@ -371,6 +358,18 @@ var app = new _vue2.default({
             _leancloudStorage2.default.User.logOut();
             this.currentUser = null;
             window.location.reload();
+        },
+        //在每次用户新增、删除 todo 的时候，就发送一个请求   
+        saveTodos: function saveTodos() {
+            var dataString = JSON.stringify(this.todoList);
+            var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
+            var avTodos = new AVTodos();
+            avTodos.set('content', dataString);
+            avTodos.save().then(function (todo) {
+                alert('保存成功');
+            }, function (error) {
+                alert('保存失败');
+            });
         }
     }
 });
