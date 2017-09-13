@@ -26,11 +26,23 @@ var app = new Vue({
     // 当窗口即将被卸载时,会触发该事件.此时页面文档依然可见,且该事件的默认动作可以被取消
     window.onbeforeunload = () => {
         let dataString = JSON.stringify(this.todoList)
-        window.localStorage.setItem('myTodos',dataString)
+        // window.localStorage.setItem('myTodos',dataString)
     }
-    let oldDataString = window.localStorage.getItem('myTodos')
-    let oldDate = JSON.parse(oldDataString)
-    this.todoList = oldDate || []
+    
+    var AVTodos = AV.Object.extend('AllTodos')
+    var avtodos = new AVTodos()
+    avtodos.set('content',dataString)
+    avtodos.save().then(function(todo){
+        // 成功保存之后，执行其他逻辑.
+        console.log('保存成功')
+    },function(error){
+        console.log('保存失败')
+    })
+
+    // 从 LeanCloud 读取 todos 的逻辑先不写
+    // let oldDataString = window.localStorage.getItem('myTodos')
+    // let oldDate = JSON.parse(oldDataString)
+    // this.todoList = oldDate || []
 
     this.currentUser = this.getCurrentUser()
   },
