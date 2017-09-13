@@ -3,6 +3,7 @@
 运用到的技术栈：webpack + vue + LeanCloud
 
 
+
 如何使用：
 1. 安装nodejs && npm
 2. git clone https://github.com/DCbryant/vue-resume.git
