@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import AV from 'leancloud-storage'
+import 'normalize.css'
 
 let APP_ID = '3gjqAs88lT1E12YBBzrMEXmk-gzGzoHsz';
 let APP_KEY = 'hqYEwwHrpDBMCOd0AUeSGGPD';
@@ -19,6 +20,7 @@ var app = new Vue({
             password: '',
         },
         currentUser: null,
+        currentTime:null
     },
     created: function () {
         this.currentUser = this.getCurrentUser()
@@ -26,19 +28,26 @@ var app = new Vue({
         this.fetchTodos() // 将原来的一坨代码取一个名字叫做 fetchTodos
     },
     methods: {
+        format:function(date){
+            var y = date.getFullYear();  
+            var m = date.getMonth() + 1;  
+            m = m < 10 ? ('0' + m) : m;  
+            var d = date.getDate();  
+            d = d < 10 ? ('0' + d) : d;  
+            var h = date.getHours();  
+            var minute = date.getMinutes();  
+            minute = minute < 10 ? ('0' + minute) : minute;  
+            return y + '-' + m + '-' + d +' '+h+':'+minute; 
+        },
         getCurrentUser: function () {
             let current = AV.User.current()
             // 一开始就要检查用户是否登录
             if (current) {
                 // attributes 就是我们传给数据库的 username
                 // createdAt 是这个数据创建的时间，id 是用户的 id
-                let {
-                    id,
-                    createdAt,
-                    attributes: {
-                        username
-                    }
-                } = current
+                let {id,createdAt,attributes: {username}} = current
+                this.formData.username = current.attributes.username
+                this.currentTime = this.format(current.createdAt)
                 return {
                     id,
                     username,

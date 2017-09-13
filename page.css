@@ -1,0 +1,143 @@
+body{
+    background: linear-gradient(to bottom right, #888888, #311b35,#5d3a51,#c69189,#5d4543);
+}
+*{
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+}
+#app{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+#app .choose-radio{
+    display: flex;
+    padding: 6px 0;
+    background-color: rgba(250, 128, 114, 0.85);
+    justify-content: space-around;
+    align-items: center;
+    width: 300px;
+    border-radius: 5px;
+}
+
+#app .choose-radio label{
+    line-height: 1.5;
+    color: #fff;
+}
+
+.signUp .formRow input,
+.login .formRow input {
+    background-color: inherit;
+    width: 300px;
+    border:0;
+    outline: 1px salmon;
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+    color: #fff;
+    padding: 8px 16px;
+    margin-top: 30px;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.signUp .formActions input,
+.login .formActions input{
+    width: 300px;
+    margin-top: 30px;
+    padding: 8px 0;
+    color: #fff;
+    border: 0;
+    background-color: salmon;
+    outline: 1px salmon;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#todo{
+    width: 400px;
+}
+
+#todo .wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#todo .wrapper .username{
+    -webkit-text-stroke: 1px salmon;
+    -webkit-text-fill-color: transparent;
+    font-size: 24px;
+}
+
+
+#todo .wrapper button{
+    border:  0;
+    padding: 8px 16px;
+    background-color: salmon;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+#todo .newTask input{
+    background-color: inherit;
+    width: 400px;
+    border:0;
+    outline: 1px salmon;
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+    color: #fff;
+    padding: 8px 16px;
+    margin-top: 30px;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+#todo .todos{
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column-reverse;
+    
+}
+#todo .todos li:nth-child(odd){
+    background-color: #74515e;
+}
+#todo .todos li{
+    margin-bottom: 16px;
+    color: #fff;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#todo .todos li input[type="checkbox"]{
+    margin: 0;
+}
+#todo .todos li .todo{
+    color: aqua;
+}
+
+#todo .todos li .done{
+    color: rgb(111, 183, 228);
+}
+
+#todo .todos li .u-done{
+    color: #888;
+}
+
+#todo .todos li .time{
+    font-size: 12px;
+}
+
+#todo .todos li button{
+    border:  0;
+    padding: 4px 8px;
+    background-color: salmon;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+}

@@ -268,6 +268,8 @@ var _leancloudStorage = __webpack_require__(4);
 
 var _leancloudStorage2 = _interopRequireDefault(_leancloudStorage);
 
+__webpack_require__(5);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var APP_ID = '3gjqAs88lT1E12YBBzrMEXmk-gzGzoHsz';
@@ -287,7 +289,8 @@ var app = new _vue2.default({
             username: '',
             password: ''
         },
-        currentUser: null
+        currentUser: null,
+        currentTime: null
     },
     created: function created() {
         this.currentUser = this.getCurrentUser();
@@ -295,6 +298,38 @@ var app = new _vue2.default({
         this.fetchTodos(); // 将原来的一坨代码取一个名字叫做 fetchTodos
     },
     methods: {
+        format: function format(date) {
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? '0' + m : m;
+            var d = date.getDate();
+            d = d < 10 ? '0' + d : d;
+            var h = date.getHours();
+            var minute = date.getMinutes();
+            minute = minute < 10 ? '0' + minute : minute;
+            return y + '-' + m + '-' + d + ' ' + h + ':' + minute;
+        },
+        getCurrentUser: function getCurrentUser() {
+            var current = _leancloudStorage2.default.User.current();
+            // 一开始就要检查用户是否登录
+            if (current) {
+                // attributes 就是我们传给数据库的 username
+                // createdAt 是这个数据创建的时间，id 是用户的 id
+                var id = current.id,
+                    createdAt = current.createdAt,
+                    username = current.attributes.username;
+
+                this.formData.username = current.attributes.username;
+                this.currentTime = this.format(current.createdAt);
+                return {
+                    id: id,
+                    username: username,
+                    createdAt: createdAt
+                };
+            } else {
+                return null;
+            }
+        },
         signup: function signup() {
             var _this = this;
 
@@ -319,21 +354,6 @@ var app = new _vue2.default({
             }, function (error) {
                 console.log('登录失败');
             });
-        },
-        getCurrentUser: function getCurrentUser() {
-            var current = _leancloudStorage2.default.User.current();
-            // 一开始就要检查用户是否登录
-            if (current) {
-                // attributes 就是我们传给数据库的 username
-                // createdAt 是这个数据创建的时间，id 是用户的 id
-                var id = current.id,
-                    createdAt = current.createdAt,
-                    username = current.attributes.username;
-
-                return { id: id, username: username, createdAt: createdAt };
-            } else {
-                return null;
-            }
         },
         //登出   
         logout: function logout() {
@@ -403,13 +423,12 @@ var app = new _vue2.default({
                     var avAllTodos = todos[0]; // 因为理论上 AllTodos 只有一个，所以我们取结果的第一项
                     var id = avAllTodos.id;
                     _this4.todoList = JSON.parse(avAllTodos.attributes.content); // 为什么有个 attributes？因为我从控制台看到
-                    _this4.todoList.id = id; // 为什么给 todoList 这个数组设置 id？因为数组也是对象啊
+                    _this4.todoList.id = id;
                 }).then(function (error) {
                     console.log(error);
                 });
             }
         }
-
     }
 });
 
@@ -10562,6 +10581,102 @@ n(26);var r=n(5);r._=n(0),r.version=n(11),r.Promise=n(1),r.localStorage=n(10),r.
 t.exports=function(t){return null!=t&&(n(t)||r(t)||!!t._isBuffer)}},function(t,e,n){!function(e){var n={},r={};n.length=0,n.getItem=function(t){return r[t]||null},n.setItem=function(t,e){void 0===e?n.removeItem(t):(r.hasOwnProperty(t)||n.length++,r[t]=""+e)},n.removeItem=function(t){r.hasOwnProperty(t)&&(delete r[t],n.length--)},n.key=function(t){return Object.keys(r)[t]||null},n.clear=function(){r={},n.length=0},t.exports=n}()},function(t,e,n){!function(){var e=n(44),r=n(12).utf8,i=n(48),s=n(12).bin,o=function(t,n){t.constructor==String?t=n&&"binary"===n.encoding?s.stringToBytes(t):r.stringToBytes(t):i(t)?t=Array.prototype.slice.call(t,0):Array.isArray(t)||(t=t.toString());for(var a=e.bytesToWords(t),u=8*t.length,c=1732584193,l=-271733879,h=-1732584194,f=271733878,d=0;d<a.length;d++)a[d]=16711935&(a[d]<<8|a[d]>>>24)|4278255360&(a[d]<<24|a[d]>>>8);a[u>>>5]|=128<<u%32,a[14+(u+64>>>9<<4)]=u;for(var p=o._ff,_=o._gg,v=o._hh,m=o._ii,d=0;d<a.length;d+=16){var y=c,g=l,b=h,w=f;c=p(c,l,h,f,a[d+0],7,-680876936),f=p(f,c,l,h,a[d+1],12,-389564586),h=p(h,f,c,l,a[d+2],17,606105819),l=p(l,h,f,c,a[d+3],22,-1044525330),c=p(c,l,h,f,a[d+4],7,-176418897),f=p(f,c,l,h,a[d+5],12,1200080426),h=p(h,f,c,l,a[d+6],17,-1473231341),l=p(l,h,f,c,a[d+7],22,-45705983),c=p(c,l,h,f,a[d+8],7,1770035416),f=p(f,c,l,h,a[d+9],12,-1958414417),h=p(h,f,c,l,a[d+10],17,-42063),l=p(l,h,f,c,a[d+11],22,-1990404162),c=p(c,l,h,f,a[d+12],7,1804603682),f=p(f,c,l,h,a[d+13],12,-40341101),h=p(h,f,c,l,a[d+14],17,-1502002290),l=p(l,h,f,c,a[d+15],22,1236535329),c=_(c,l,h,f,a[d+1],5,-165796510),f=_(f,c,l,h,a[d+6],9,-1069501632),h=_(h,f,c,l,a[d+11],14,643717713),l=_(l,h,f,c,a[d+0],20,-373897302),c=_(c,l,h,f,a[d+5],5,-701558691),f=_(f,c,l,h,a[d+10],9,38016083),h=_(h,f,c,l,a[d+15],14,-660478335),l=_(l,h,f,c,a[d+4],20,-405537848),c=_(c,l,h,f,a[d+9],5,568446438),f=_(f,c,l,h,a[d+14],9,-1019803690),h=_(h,f,c,l,a[d+3],14,-187363961),l=_(l,h,f,c,a[d+8],20,1163531501),c=_(c,l,h,f,a[d+13],5,-1444681467),f=_(f,c,l,h,a[d+2],9,-51403784),h=_(h,f,c,l,a[d+7],14,1735328473),l=_(l,h,f,c,a[d+12],20,-1926607734),c=v(c,l,h,f,a[d+5],4,-378558),f=v(f,c,l,h,a[d+8],11,-2022574463),h=v(h,f,c,l,a[d+11],16,1839030562),l=v(l,h,f,c,a[d+14],23,-35309556),c=v(c,l,h,f,a[d+1],4,-1530992060),f=v(f,c,l,h,a[d+4],11,1272893353),h=v(h,f,c,l,a[d+7],16,-155497632),l=v(l,h,f,c,a[d+10],23,-1094730640),c=v(c,l,h,f,a[d+13],4,681279174),f=v(f,c,l,h,a[d+0],11,-358537222),h=v(h,f,c,l,a[d+3],16,-722521979),l=v(l,h,f,c,a[d+6],23,76029189),c=v(c,l,h,f,a[d+9],4,-640364487),f=v(f,c,l,h,a[d+12],11,-421815835),h=v(h,f,c,l,a[d+15],16,530742520),l=v(l,h,f,c,a[d+2],23,-995338651),c=m(c,l,h,f,a[d+0],6,-198630844),f=m(f,c,l,h,a[d+7],10,1126891415),h=m(h,f,c,l,a[d+14],15,-1416354905),l=m(l,h,f,c,a[d+5],21,-57434055),c=m(c,l,h,f,a[d+12],6,1700485571),f=m(f,c,l,h,a[d+3],10,-1894986606),h=m(h,f,c,l,a[d+10],15,-1051523),l=m(l,h,f,c,a[d+1],21,-2054922799),c=m(c,l,h,f,a[d+8],6,1873313359),f=m(f,c,l,h,a[d+15],10,-30611744),h=m(h,f,c,l,a[d+6],15,-1560198380),l=m(l,h,f,c,a[d+13],21,1309151649),c=m(c,l,h,f,a[d+4],6,-145523070),f=m(f,c,l,h,a[d+11],10,-1120210379),h=m(h,f,c,l,a[d+2],15,718787259),l=m(l,h,f,c,a[d+9],21,-343485551),c=c+y>>>0,l=l+g>>>0,h=h+b>>>0,f=f+w>>>0}return e.endian([c,l,h,f])};o._ff=function(t,e,n,r,i,s,o){var a=t+(e&n|~e&r)+(i>>>0)+o;return(a<<s|a>>>32-s)+e},o._gg=function(t,e,n,r,i,s,o){var a=t+(e&r|n&~r)+(i>>>0)+o;return(a<<s|a>>>32-s)+e},o._hh=function(t,e,n,r,i,s,o){var a=t+(e^n^r)+(i>>>0)+o;return(a<<s|a>>>32-s)+e},o._ii=function(t,e,n,r,i,s,o){var a=t+(n^(e|~r))+(i>>>0)+o;return(a<<s|a>>>32-s)+e},o._blocksize=16,o._digestsize=16,t.exports=function(t,n){if(void 0===t||null===t)throw new Error("Illegal argument "+t);var r=e.wordsToBytes(o(t,n));return n&&n.asBytes?r:n&&n.asString?s.bytesToString(r):e.bytesToHex(r)}}()},function(t,e){function n(t){if(t=String(t),!(t.length>100)){var e=/^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(t);if(e){var n=parseFloat(e[1]);switch((e[2]||"ms").toLowerCase()){case"years":case"year":case"yrs":case"yr":case"y":return n*l;case"days":case"day":case"d":return n*c;case"hours":case"hour":case"hrs":case"hr":case"h":return n*u;case"minutes":case"minute":case"mins":case"min":case"m":return n*a;case"seconds":case"second":case"secs":case"sec":case"s":return n*o;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return n;default:return}}}}function r(t){return t>=c?Math.round(t/c)+"d":t>=u?Math.round(t/u)+"h":t>=a?Math.round(t/a)+"m":t>=o?Math.round(t/o)+"s":t+"ms"}function i(t){return s(t,c,"day")||s(t,u,"hour")||s(t,a,"minute")||s(t,o,"second")||t+" ms"}function s(t,e,n){if(!(t<e))return t<1.5*e?Math.floor(t/e)+" "+n:Math.ceil(t/e)+" "+n+"s"}var o=1e3,a=60*o,u=60*a,c=24*u,l=365.25*c;t.exports=function(t,e){e=e||{};var s=typeof t;if("string"===s&&t.length>0)return n(t);if("number"===s&&!1===isNaN(t))return e.long?i(t):r(t);throw new Error("val is not a non-empty string or a valid number. val="+JSON.stringify(t))}},function(t,e,n){function r(t){if(t)return i(t)}function i(t){for(var e in r.prototype)t[e]=r.prototype[e];return t}var s=n(13);t.exports=r,r.prototype.clearTimeout=function(){return clearTimeout(this._timer),clearTimeout(this._responseTimeoutTimer),delete this._timer,delete this._responseTimeoutTimer,this},r.prototype.parse=function(t){return this._parser=t,this},r.prototype.responseType=function(t){return this._responseType=t,this},r.prototype.serialize=function(t){return this._serializer=t,this},r.prototype.timeout=function(t){if(!t||"object"!=typeof t)return this._timeout=t,this._responseTimeout=0,this;for(var e in t)switch(e){case"deadline":this._timeout=t.deadline;break;case"response":this._responseTimeout=t.response;break;default:console.warn("Unknown timeout option",e)}return this},r.prototype.retry=function(t){return 0!==arguments.length&&!0!==t||(t=1),t<=0&&(t=0),this._maxRetries=t,this._retries=0,this},r.prototype._retry=function(){return this.clearTimeout(),this.req&&(this.req=null,this.req=this.request()),this._aborted=!1,this.timedout=!1,this._end()},r.prototype.then=function(t,e){if(!this._fullfilledPromise){var n=this;this._endCalled&&console.warn("Warning: superagent request was sent twice, because both .end() and .then() were called. Never call .end() if you use promises"),this._fullfilledPromise=new Promise(function(t,e){n.end(function(n,r){n?e(n):t(r)})})}return this._fullfilledPromise.then(t,e)},r.prototype.catch=function(t){return this.then(void 0,t)},r.prototype.use=function(t){return t(this),this},r.prototype.ok=function(t){if("function"!=typeof t)throw Error("Callback required");return this._okCallback=t,this},r.prototype._isResponseOK=function(t){return!!t&&(this._okCallback?this._okCallback(t):t.status>=200&&t.status<300)},r.prototype.get=function(t){return this._header[t.toLowerCase()]},r.prototype.getHeader=r.prototype.get,r.prototype.set=function(t,e){if(s(t)){for(var n in t)this.set(n,t[n]);return this}return this._header[t.toLowerCase()]=e,this.header[t]=e,this},r.prototype.unset=function(t){return delete this._header[t.toLowerCase()],delete this.header[t],this},r.prototype.field=function(t,e){if(null===t||void 0===t)throw new Error(".field(name, val) name can not be empty");if(this._data&&console.error(".field() can't be used if .send() is used. Please use only .send() or only .field() & .attach()"),s(t)){for(var n in t)this.field(n,t[n]);return this}if(Array.isArray(e)){for(var r in e)this.field(t,e[r]);return this}if(null===e||void 0===e)throw new Error(".field(name, val) val can not be empty");return"boolean"==typeof e&&(e=""+e),this._getFormData().append(t,e),this},r.prototype.abort=function(){return this._aborted?this:(this._aborted=!0,this.xhr&&this.xhr.abort(),this.req&&this.req.abort(),this.clearTimeout(),this.emit("abort"),this)},r.prototype.withCredentials=function(t){return void 0==t&&(t=!0),this._withCredentials=t,this},r.prototype.redirects=function(t){return this._maxRedirects=t,this},r.prototype.toJSON=function(){return{method:this.method,url:this.url,data:this._data,headers:this._header}},r.prototype.send=function(t){var e=s(t),n=this._header["content-type"];if(this._formData&&console.error(".send() can't be used if .attach() or .field() is used. Please use only .send() or only .field() & .attach()"),e&&!this._data)Array.isArray(t)?this._data=[]:this._isHost(t)||(this._data={});else if(t&&this._data&&this._isHost(this._data))throw Error("Can't merge these send calls");if(e&&s(this._data))for(var r in t)this._data[r]=t[r];else"string"==typeof t?(n||this.type("form"),n=this._header["content-type"],this._data="application/x-www-form-urlencoded"==n?this._data?this._data+"&"+t:t:(this._data||"")+t):this._data=t;return!e||this._isHost(t)?this:(n||this.type("json"),this)},r.prototype.sortQuery=function(t){return this._sort=void 0===t||t,this},r.prototype._finalizeQueryString=function(){var t=this._query.join("&");if(t&&(this.url+=(this.url.indexOf("?")>=0?"&":"?")+t),this._query.length=0,this._sort){var e=this.url.indexOf("?");if(e>=0){var n=this.url.substring(e+1).split("&");"function"==typeof this._sort?n.sort(this._sort):n.sort(),this.url=this.url.substring(0,e)+"?"+n.join("&")}}},r.prototype._appendQueryString=function(){console.trace("Unsupported")},r.prototype._timeoutError=function(t,e,n){if(!this._aborted){var r=new Error(t+e+"ms exceeded");r.timeout=e,r.code="ECONNABORTED",r.errno=n,this.timedout=!0,this.abort(),this.callback(r)}},r.prototype._setTimeouts=function(){var t=this;this._timeout&&!this._timer&&(this._timer=setTimeout(function(){t._timeoutError("Timeout of ",t._timeout,"ETIME")},this._timeout)),this._responseTimeout&&!this._responseTimeoutTimer&&(this._responseTimeoutTimer=setTimeout(function(){t._timeoutError("Response timeout of ",t._responseTimeout,"ETIMEDOUT")},this._responseTimeout))}},function(t,e,n){function r(t){if(t)return i(t)}function i(t){for(var e in r.prototype)t[e]=r.prototype[e];return t}var s=n(55);t.exports=r,r.prototype.get=function(t){return this.header[t.toLowerCase()]},r.prototype._setHeaderProperties=function(t){var e=t["content-type"]||"";this.type=s.type(e);var n=s.params(e);for(var r in n)this[r]=n[r];this.links={};try{t.link&&(this.links=s.parseLinks(t.link))}catch(t){}},r.prototype._setStatusProperties=function(t){var e=t/100|0;this.status=this.statusCode=t,this.statusType=e,this.info=1==e,this.ok=2==e,this.redirect=3==e,this.clientError=4==e,this.serverError=5==e,this.error=(4==e||5==e)&&this.toError(),this.accepted=202==t,this.noContent=204==t,this.badRequest=400==t,this.unauthorized=401==t,this.notAcceptable=406==t,this.forbidden=403==t,this.notFound=404==t}},function(t,e){var n=["ECONNRESET","ETIMEDOUT","EADDRINFO","ESOCKETTIMEDOUT"];t.exports=function(t,e){return!!(t&&t.code&&~n.indexOf(t.code))||(!!(e&&e.status&&e.status>=500)||(!!(t&&"timeout"in t&&"ECONNABORTED"==t.code)||!!(t&&"crossDomain"in t)))}},function(t,e){e.type=function(t){return t.split(/ *; */).shift()},e.params=function(t){return t.split(/ *; */).reduce(function(t,e){var n=e.split(/ *= */),r=n.shift(),i=n.shift();return r&&i&&(t[r]=i),t},{})},e.parseLinks=function(t){return t.split(/ *, */).reduce(function(t,e){var n=e.split(/ *; */),r=n[0].slice(1,-1);return t[n[1].split(/ *= */)[1].slice(1,-1)]=r,t},{})},e.cleanHeader=function(t,e){return delete t["content-type"],delete t["content-length"],delete t["transfer-encoding"],delete t.host,e&&delete t.cookie,t}},function(t,e){}])});
 //# sourceMappingURL=av-min.js.map
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(6)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */\n\n/* Document\n   ========================================================================== */\n\n/**\n * 1. Correct the line height in all browsers.\n * 2. Prevent adjustments of font size after orientation changes in\n *    IE on Windows Phone and in iOS.\n */\n\nhtml {\n  line-height: 1.15; /* 1 */\n  -ms-text-size-adjust: 100%; /* 2 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n}\n\n/* Sections\n   ========================================================================== */\n\n/**\n * Remove the margin in all browsers (opinionated).\n */\n\nbody {\n  margin: 0;\n}\n\n/**\n * Add the correct display in IE 9-.\n */\n\narticle,\naside,\nfooter,\nheader,\nnav,\nsection {\n  display: block;\n}\n\n/**\n * Correct the font size and margin on `h1` elements within `section` and\n * `article` contexts in Chrome, Firefox, and Safari.\n */\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\n/* Grouping content\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n * 1. Add the correct display in IE.\n */\n\nfigcaption,\nfigure,\nmain { /* 1 */\n  display: block;\n}\n\n/**\n * Add the correct margin in IE 8.\n */\n\nfigure {\n  margin: 1em 40px;\n}\n\n/**\n * 1. Add the correct box sizing in Firefox.\n * 2. Show the overflow in Edge and IE.\n */\n\nhr {\n  box-sizing: content-box; /* 1 */\n  height: 0; /* 1 */\n  overflow: visible; /* 2 */\n}\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\npre {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/* Text-level semantics\n   ========================================================================== */\n\n/**\n * 1. Remove the gray background on active links in IE 10.\n * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.\n */\n\na {\n  background-color: transparent; /* 1 */\n  -webkit-text-decoration-skip: objects; /* 2 */\n}\n\n/**\n * 1. Remove the bottom border in Chrome 57- and Firefox 39-.\n * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.\n */\n\nabbr[title] {\n  border-bottom: none; /* 1 */\n  text-decoration: underline; /* 2 */\n  text-decoration: underline dotted; /* 2 */\n}\n\n/**\n * Prevent the duplicate application of `bolder` by the next rule in Safari 6.\n */\n\nb,\nstrong {\n  font-weight: inherit;\n}\n\n/**\n * Add the correct font weight in Chrome, Edge, and Safari.\n */\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\ncode,\nkbd,\nsamp {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/**\n * Add the correct font style in Android 4.3-.\n */\n\ndfn {\n  font-style: italic;\n}\n\n/**\n * Add the correct background and color in IE 9-.\n */\n\nmark {\n  background-color: #ff0;\n  color: #000;\n}\n\n/**\n * Add the correct font size in all browsers.\n */\n\nsmall {\n  font-size: 80%;\n}\n\n/**\n * Prevent `sub` and `sup` elements from affecting the line height in\n * all browsers.\n */\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/* Embedded content\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n */\n\naudio,\nvideo {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in iOS 4-7.\n */\n\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n\n/**\n * Remove the border on images inside links in IE 10-.\n */\n\nimg {\n  border-style: none;\n}\n\n/**\n * Hide the overflow in IE.\n */\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\n/* Forms\n   ========================================================================== */\n\n/**\n * 1. Change the font styles in all browsers (opinionated).\n * 2. Remove the margin in Firefox and Safari.\n */\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: sans-serif; /* 1 */\n  font-size: 100%; /* 1 */\n  line-height: 1.15; /* 1 */\n  margin: 0; /* 2 */\n}\n\n/**\n * Show the overflow in IE.\n * 1. Show the overflow in Edge.\n */\n\nbutton,\ninput { /* 1 */\n  overflow: visible;\n}\n\n/**\n * Remove the inheritance of text transform in Edge, Firefox, and IE.\n * 1. Remove the inheritance of text transform in Firefox.\n */\n\nbutton,\nselect { /* 1 */\n  text-transform: none;\n}\n\n/**\n * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`\n *    controls in Android 4.\n * 2. Correct the inability to style clickable types in iOS and Safari.\n */\n\nbutton,\nhtml [type=\"button\"], /* 1 */\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button; /* 2 */\n}\n\n/**\n * Remove the inner border and padding in Firefox.\n */\n\nbutton::-moz-focus-inner,\n[type=\"button\"]::-moz-focus-inner,\n[type=\"reset\"]::-moz-focus-inner,\n[type=\"submit\"]::-moz-focus-inner {\n  border-style: none;\n  padding: 0;\n}\n\n/**\n * Restore the focus styles unset by the previous rule.\n */\n\nbutton:-moz-focusring,\n[type=\"button\"]:-moz-focusring,\n[type=\"reset\"]:-moz-focusring,\n[type=\"submit\"]:-moz-focusring {\n  outline: 1px dotted ButtonText;\n}\n\n/**\n * Correct the padding in Firefox.\n */\n\nfieldset {\n  padding: 0.35em 0.75em 0.625em;\n}\n\n/**\n * 1. Correct the text wrapping in Edge and IE.\n * 2. Correct the color inheritance from `fieldset` elements in IE.\n * 3. Remove the padding so developers are not caught out when they zero out\n *    `fieldset` elements in all browsers.\n */\n\nlegend {\n  box-sizing: border-box; /* 1 */\n  color: inherit; /* 2 */\n  display: table; /* 1 */\n  max-width: 100%; /* 1 */\n  padding: 0; /* 3 */\n  white-space: normal; /* 1 */\n}\n\n/**\n * 1. Add the correct display in IE 9-.\n * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.\n */\n\nprogress {\n  display: inline-block; /* 1 */\n  vertical-align: baseline; /* 2 */\n}\n\n/**\n * Remove the default vertical scrollbar in IE.\n */\n\ntextarea {\n  overflow: auto;\n}\n\n/**\n * 1. Add the correct box sizing in IE 10-.\n * 2. Remove the padding in IE 10-.\n */\n\n[type=\"checkbox\"],\n[type=\"radio\"] {\n  box-sizing: border-box; /* 1 */\n  padding: 0; /* 2 */\n}\n\n/**\n * Correct the cursor style of increment and decrement buttons in Chrome.\n */\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/**\n * 1. Correct the odd appearance in Chrome and Safari.\n * 2. Correct the outline style in Safari.\n */\n\n[type=\"search\"] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/**\n * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.\n */\n\n[type=\"search\"]::-webkit-search-cancel-button,\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/**\n * 1. Correct the inability to style clickable types in iOS and Safari.\n * 2. Change font properties to `inherit` in Safari.\n */\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/* Interactive\n   ========================================================================== */\n\n/*\n * Add the correct display in IE 9-.\n * 1. Add the correct display in Edge, IE, and Firefox.\n */\n\ndetails, /* 1 */\nmenu {\n  display: block;\n}\n\n/*\n * Add the correct display in all browsers.\n */\n\nsummary {\n  display: list-item;\n}\n\n/* Scripting\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n */\n\ncanvas {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in IE.\n */\n\ntemplate {\n  display: none;\n}\n\n/* Hidden\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 10-.\n */\n\n[hidden] {\n  display: none;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
 
 /***/ })
 /******/ ]);
