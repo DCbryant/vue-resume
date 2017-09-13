@@ -23,26 +23,9 @@ var app = new Vue({
     currentUser: null,
   },
   created: function(){
-    // 所以这次我们放弃beforeunload这个事件
-    
-    // // 从 LeanCloud 读取 todos 的逻辑先不写
-    // let oldDataString = window.localStorage.getItem('myTodos')
-    // let oldDate = JSON.parse(oldDataString)
-    // this.todoList = oldDate || []
-
     this.currentUser = this.getCurrentUser()
-    // 批量操作读取数据
-    if(this.currentUser){
-        var query = new AV.Query('AllTodos');
-        query.find().then((todos) =>{
-            let avAllTodos = todos[0] // 因为理论上 AllTodos 只有一个，所以我们取结果的第一项
-            let id = avAllTodos.id
-            this.todoList = JSON.parse(avAllTodos.attributes.content) // 为什么有个 attributes？因为我从控制台看到
-            this.todoList.id = id // 为什么给 todoList 这个数组设置 id？因为数组也是对象啊
-          }).then(function(error) {
-            console.log(error)
-          });
-    }
+
+    this.fetchTodos() // 将原来的一坨代码取一个名字叫做 fetchTodos
   },
   methods:{
       signup:function(){
@@ -61,6 +44,7 @@ var app = new Vue({
       login: function () {
           AV.User.logIn(this.formData.username, this.formData.password).then((loginedUser) => { 
               this.currentUser = this.getCurrentUser() 
+              this.fetchTodos() // 登录成功后读取 todos
           }, function (error) {
               console.log('登录失败') 
           });
@@ -131,6 +115,20 @@ var app = new Vue({
           this.updateTodos()
         }else{
           this.saveTodos()
+        }
+      },
+      
+      fetchTodos:function(){
+        if(this.currentUser){
+            var query = new AV.Query('AllTodos');
+            query.find().then((todos) =>{
+                let avAllTodos = todos[0] // 因为理论上 AllTodos 只有一个，所以我们取结果的第一项
+                let id = avAllTodos.id
+                this.todoList = JSON.parse(avAllTodos.attributes.content) // 为什么有个 attributes？因为我从控制台看到
+                this.todoList.id = id // 为什么给 todoList 这个数组设置 id？因为数组也是对象啊
+              }).then(function(error) {
+                console.log(error)
+              });
         }
       }
       

@@ -383,7 +383,7 @@ var app = new _vue2.default({
             var avTodos = new AVTodos();
             //Access Control List   
             var acl = new _leancloudStorage2.default.ACL();
-            acl.setPublicReadAccess(_leancloudStorage2.default.User.current(), true); // 只有这个 user 能读
+            acl.setReadAccess(_leancloudStorage2.default.User.current(), true); // 只有这个 user 能读
             acl.setWriteAccess(_leancloudStorage2.default.User.current(), true); // 只有这个 user 能写
 
             avTodos.set('content', dataString);
