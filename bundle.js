@@ -298,6 +298,15 @@ var app = new _vue2.default({
         // this.todoList = oldDate || []
 
         this.currentUser = this.getCurrentUser();
+        // 批量操作读取数据
+        if (this.currentUser) {
+            var query = new _leancloudStorage2.default.Query('AllTodos');
+            query.find().then(function (todos) {
+                console.log(todos);
+            }).then(function (error) {
+                console.log(error);
+            });
+        }
     },
     methods: {
         addTodo: function addTodo() {
@@ -364,13 +373,22 @@ var app = new _vue2.default({
             var dataString = JSON.stringify(this.todoList);
             var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
             var avTodos = new AVTodos();
+            //Access Control List   
+            var acl = new _leancloudStorage2.default.ACL();
+            acl.setPublicReadAccess(_leancloudStorage2.default.User.current(), true); // 只有这个 user 能读
+            acl.setWriteAccess(_leancloudStorage2.default.User.current(), true); // 只有这个 user 能写
+
             avTodos.set('content', dataString);
+            avTodos.setACL(acl); // 设置访问控制
             avTodos.save().then(function (todo) {
                 alert('保存成功');
             }, function (error) {
                 alert('保存失败');
             });
         }
+        // 此时可以保存成功，但是很难受，那怎么读取数据呢
+        // 每个 todo 都有一个 id，我可以通过 id 查询到对应的 todo，但是我们怎么知道当前用户有哪些 todo 呢？
+        // 我们保存 todo 的逻辑有问题：没有将用户和 todo 关联起来
     }
 });
 
