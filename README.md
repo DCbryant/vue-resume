@@ -6,4 +6,4 @@
 如何使用：
 1. 安装nodejs && npm
 2. git clone https://github.com/DCbryant/vue-resume.git
-3. npm start && webpack
+3. npm start || webpack
